@@ -11,8 +11,9 @@ echo.
 set "JAVA_HOME=F:\jdk25\zulu25.30.17-ca-jdk25.0.1-win_x64"
 set "MYSQL_BIN=C:\Program Files\MySQL\MySQL Server 9.6\bin"
 set "PATH=%JAVA_HOME%\bin;%MYSQL_BIN%;%PATH%"
-set "ARK_API_KEY=ark-3daed409-4a92-4045-93d7-f8a5a7e46abb-deafb"
-set "VOLCENGINE_SESSION_TOKEN=ep-20260609191412-v2nps"
+
+REM ===== Load API Keys from .env (if exists) =====
+if exist ".env" for /f "tokens=1,* delims==" %%a in (.env) do set %%a=%%b
 
 call :main
 pause
