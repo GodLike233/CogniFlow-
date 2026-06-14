@@ -1,0 +1,42 @@
+数据库关系模式（CogniFlow）
+
+─────────────────────────────────────────────────
+
+users (<u>id</u>, username, password, email, role)
+
+courses (<u>id</u>, name, description, category)
+
+knowledge_points (<u>id</u>, name, description, difficulty, order_index)
+  FK: course_id  → courses(id)
+  FK: parent_id  → knowledge_points(id)
+
+questions (<u>id</u>, type, title, option_a, option_b, option_c, option_d, answer, analysis, score, difficulty)
+  FK: course_id          → courses(id)
+  FK: knowledge_point_id → knowledge_points(id)
+
+study_records (<u>id</u>, status, score, time_spent)
+  FK: user_id             → users(id)
+  FK: knowledge_point_id  → knowledge_points(id)
+
+study_plans (<u>id</u>, title, plan_type, content, total_days, progress_days)
+  FK: user_id → users(id)
+
+chat_messages (<u>id</u>, role, content)
+  FK: user_id → users(id)
+
+exam_records (<u>id</u>, total_score, user_score, correct_count, question_count, question_ids, status, start_time, end_time)
+  FK: user_id   → users(id)
+  FK: course_id → courses(id)
+
+exam_answers (<u>id</u>, user_answer, is_correct, score)
+  FK: exam_record_id → exam_records(id)
+  FK: question_id    → questions(id)
+
+announcements (<u>id</u>, title, content, pinned)
+  FK: publisher_id → users(id)
+
+course_requests (<u>id</u>, topic, description, status)
+  FK: user_id → users(id)
+
+system_logs (<u>id</u>, action, detail)
+  FK: user_id → users(id)

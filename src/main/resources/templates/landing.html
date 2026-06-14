@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CogniFlow — AI驱动的个性化学习导航系统</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0a0820;--text:#e8e8e8;--text-dim:rgba(255,255,255,0.5);
+            --card-bg:rgba(255,255,255,0.03);--card-border:rgba(255,255,255,0.06);
+            --topbar-bg:rgba(10,8,32,0.85);--accent:#a78bfa;
+        }
+        .light{
+            --bg:#f5f3ff;--text:#1a1a2e;--text-dim:rgba(0,0,0,0.55);
+            --card-bg:rgba(255,255,255,0.8);--card-border:rgba(124,58,237,0.12);
+            --topbar-bg:rgba(255,255,255,0.88);--accent:#6d28d9;
+        }
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            background:var(--bg);color:var(--text);overflow-x:hidden;transition:background .6s,color .3s;
+        }
+        ::-webkit-scrollbar{width:6px}
+        ::-webkit-scrollbar-thumb{background:rgba(167,139,250,0.4);border-radius:3px}
+
+        /* ===== TOPBAR ===== */
+        .topbar{
+            position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 28px;
+            display:flex;justify-content:space-between;align-items:center;
+            background:var(--topbar-bg);backdrop-filter:blur(16px);
+            border-bottom:1px solid var(--card-border);transition:background .6s;
+        }
+        .topbar .brand{
+            font-size:20px;font-weight:700;
+            background:linear-gradient(135deg,#a78bfa,#60a5fa,#8b5cf6,#a78bfa);
+            background-size:300% 300%;-webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            animation:gradientFlow 4s ease infinite;
+        }
+        .topbar .right{display:flex;align-items:center;gap:12px}
+        .btn-sm{
+            padding:7px 16px;border-radius:20px;font-size:13px;cursor:pointer;
+            transition:all .3s;text-decoration:none;display:inline-block;
+            background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+            color:var(--text);font-family:inherit;
+        }
+        .btn-sm:hover{background:rgba(167,139,250,0.15);border-color:rgba(167,139,250,0.3)}
+        .theme-btn{
+            border-radius:50%;width:34px;height:34px;padding:0;font-size:16px;
+            display:flex;align-items:center;justify-content:center;
+            background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+            cursor:pointer;color:var(--text);
+        }
+
+        /* ===== HERO ===== */
+        .hero{
+            position:relative;min-height:100vh;display:flex;flex-direction:column;
+            align-items:center;justify-content:center;text-align:center;padding:80px 24px 40px;
+            overflow:hidden;
+        }
+        .hero::before{
+            content:'';position:absolute;inset:0;
+            background:radial-gradient(ellipse at 20% 50%,rgba(120,80,240,0.25),transparent 50%),
+                       radial-gradient(ellipse at 80% 20%,rgba(60,140,240,0.18),transparent 40%),
+                       radial-gradient(ellipse at 50% 80%,rgba(140,80,240,0.15),transparent 45%);
+        }
+        .hero::after{
+            content:'';position:absolute;inset:0;
+            background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 L55 30 L30 55 L5 30Z' fill='none' stroke='rgba(167,139,250,0.06)' stroke-width='1'/%3E%3Ccircle cx='30' cy='30' r='3' fill='rgba(167,139,250,0.1)'/%3E%3C/svg%3E");
+            opacity:.5;
+        }
+        .hero-content{position:relative;z-index:2;max-width:800px}
+        .hero-content .badge{
+            display:inline-block;padding:6px 18px;margin-bottom:20px;
+            background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);
+            border-radius:20px;font-size:13px;color:#c4b5fd;letter-spacing:1px;
+        }
+        @keyframes gradientFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        .hero-content h1{
+            font-size:clamp(32px,5vw,54px);font-weight:800;line-height:1.2;margin-bottom:16px;
+            background:linear-gradient(135deg,#a78bfa,#60a5fa,#8b5cf6,#a78bfa);
+            background-size:300% 300%;-webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;animation:gradientFlow 4s ease infinite;
+        }
+        .hero-content .subtitle{
+            font-size:clamp(14px,2vw,17px);color:var(--text-dim);
+            line-height:1.6;margin-bottom:32px;max-width:600px;margin-left:auto;margin-right:auto;
+        }
+        .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+        .hero-btns a{
+            text-decoration:none;padding:14px 32px;border-radius:12px;font-size:15px;
+            font-weight:600;transition:all .35s;cursor:pointer;display:inline-block;
+        }
+        .btn-primary{
+            background:linear-gradient(135deg,#a78bfa,#6366f1);color:#fff;
+            box-shadow:0 8px 30px rgba(99,102,241,0.3);
+        }
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(99,102,241,0.45)}
+        .btn-outline{
+            background:transparent;border:2px solid rgba(167,139,250,0.25);color:#c4b5fd;
+        }
+        .btn-outline:hover{background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.5)}
+        .hero-hint{margin-top:24px;font-size:12px;color:var(--text-dim)}
+        .hero-hint code{background:rgba(167,139,250,0.1);padding:2px 8px;border-radius:6px;font-size:12px;color:var(--text)}
+
+        /* floating icons */
+        @keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-18px) rotate(3deg)}}
+        @keyframes float2{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(-2deg)}}
+        @keyframes float3{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+        .floating{position:absolute;z-index:1;pointer-events:none;opacity:.4}
+        .floating:nth-child(1){top:12%;left:8%;font-size:48px;animation:float 6s ease-in-out infinite}
+        .floating:nth-child(2){top:18%;right:10%;font-size:42px;animation:float2 7s ease-in-out infinite .5s}
+        .floating:nth-child(3){bottom:22%;left:12%;font-size:38px;animation:float3 8s ease-in-out infinite 1s}
+        .floating:nth-child(4){bottom:25%;right:14%;font-size:44px;animation:float 7s ease-in-out infinite 1.5s}
+        .floating:nth-child(5){top:45%;left:4%;font-size:36px;animation:float2 9s ease-in-out infinite .8s}
+        .floating:nth-child(6){top:50%;right:6%;font-size:32px;animation:float3 6s ease-in-out infinite 2s}
+
+        /* ===== FEATURES ===== */
+        .section{padding:80px 24px;max-width:1100px;margin:0 auto}
+        .section h2{font-size:32px;text-align:center;margin-bottom:12px;font-weight:800;
+            background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;}
+        .section .sec-sub{text-align:center;color:var(--text-dim);font-size:14px;margin-bottom:48px}
+        .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+        .feat-card{
+            background:var(--card-bg);border:1px solid var(--card-border);
+            border-radius:20px;padding:34px 26px;transition:all .4s cubic-bezier(.4,0,.2,1);
+            position:relative;overflow:hidden;
+        }
+        .feat-card::before{
+            content:'';position:absolute;top:0;left:0;right:0;height:1px;
+            background:linear-gradient(90deg,transparent,rgba(167,139,250,0.3),transparent);
+            opacity:0;transition:opacity .4s;
+        }
+        .feat-card:hover{
+            transform:translateY(-6px);border-color:rgba(167,139,250,0.25);
+            box-shadow:0 20px 50px rgba(0,0,0,0.3);
+        }
+        .feat-card:hover::before{opacity:1}
+        .feat-card .f-icon{font-size:44px;margin-bottom:18px;transition:transform .4s}
+        .feat-card:hover .f-icon{transform:scale(1.1)}
+        .feat-card h3{font-size:18px;margin-bottom:10px;color:var(--text)}
+        .feat-card p{font-size:13px;color:var(--text-dim);line-height:1.6}
+
+        /* ===== TECH STACK ===== */
+        .tech-grid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:20px}
+        .tech-tag{
+            padding:10px 20px;background:var(--card-bg);
+            border:1px solid var(--card-border);border-radius:10px;
+            font-size:13px;color:var(--text-dim);transition:.3s;cursor:default;
+        }
+        .tech-tag:hover{background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.3);color:#c4b5fd}
+
+        /* ===== STATS ===== */
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px}
+        .stat-item{text-align:center;padding:24px}
+        .stat-item .num{font-size:40px;font-weight:800;
+            background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;}
+        .stat-item .lbl{font-size:13px;color:rgba(255,255,255,0.45);margin-top:4px}
+
+        /* ===== FOOTER ===== */
+        .footer{text-align:center;padding:40px 24px;border-top:1px solid var(--card-border);
+            color:var(--text-dim);font-size:12px;}
+
+        /* ===== SCROLL ===== */
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        .scroll-reveal{animation:fadeInUp .7s ease both}
+        .scroll-reveal:nth-child(2){animation-delay:.1s}
+        .scroll-reveal:nth-child(3){animation-delay:.2s}
+        .scroll-reveal:nth-child(4){animation-delay:.3s}
+        .scroll-reveal:nth-child(5){animation-delay:.4s}
+        .scroll-reveal:nth-child(6){animation-delay:.5s}
+    </style>
+</head>
+<body>
+
+<!-- ========== TOPBAR ========== -->
+<nav class="topbar">
+    <span class="brand">✦ CogniFlow</span>
+    <div class="right">
+        <a href="https://github.com" target="_blank" class="btn-sm" id="githubLink">⭐ GitHub</a>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        <a href="/login" class="btn-sm" style="background:rgba(167,139,250,0.2);border-color:rgba(167,139,250,0.3);color:#c4b5fd">登录</a>
+    </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+    <span class="floating">📚</span>
+    <span class="floating">🤖</span>
+    <span class="floating">📝</span>
+    <span class="floating">📊</span>
+    <span class="floating">🎯</span>
+    <span class="floating">⚡</span>
+    <div class="hero-content">
+        <div class="badge">🚀 火山引擎豆包大模型 · 智能驱动</div>
+        <h1>CogniFlow</h1>
+        <p class="subtitle">
+            个性化学习路径导航系统。融合 AI 大模型与教学管理，
+            为学生提供课程学习、在线考试、智能规划的一站式体验。
+            在沉浸式交互中，让每一次学习都有迹可循。
+        </p>
+        <div class="hero-btns">
+            <a href="/login" class="btn-primary">🚀 进入系统</a>
+            <a href="/login" class="btn-outline">🔑 登录后台管理</a>
+        </div>
+        <div class="hero-hint">
+            📖 学生测试账户：<code>student</code> / <code>123456</code> &nbsp;|&nbsp;
+            🔑 管理员测试账户：<code>admin</code> / <code>admin123</code>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FEATURES ========== -->
+<section class="section">
+    <h2>重构您的学习体验</h2>
+    <p class="sec-sub">四大核心能力，打造全方位的智能学习生态</p>
+    <div class="features">
+        <div class="feat-card scroll-reveal">
+            <div class="f-icon">🤖</div>
+            <h3>AI 智能规划</h3>
+            <p>4种学习模式——21天挑战、极速冲刺、考级冲刺、每日打卡。接入火山引擎豆包大模型，为每个目标定制个性化学习路线图。</p>
+        </div>
+        <div class="feat-card scroll-reveal">
+            <div class="f-icon">📝</div>
+            <h3>在线考试系统</h3>
+            <p>随机抽题组卷，支持单选/多选/判断/简答四种题型。自动判分引擎、考试中断恢复、成绩历史追溯——让考试管理零负担。</p>
+        </div>
+        <div class="feat-card scroll-reveal">
+            <div class="f-icon">📚</div>
+            <h3>课程知识树</h3>
+            <p>自关联多层级知识点结构，递归算法构建任意深度知识图谱。学习进度追踪、薄弱点定位、数据统计——一切尽在掌控。</p>
+        </div>
+        <div class="feat-card scroll-reveal">
+            <div class="f-icon">⚙️</div>
+            <h3>强大管理后台</h3>
+            <p>10大模块竖版控制台——课程CRUD、题库管理、学生管理、计划监控、公告发布、系统日志。AI一键生成完整课程体系。</p>
+        </div>
+    </div>
+</section>
+
+<!-- ========== STATS ========== -->
+<section class="section" style="padding-top:0">
+    <div class="stats">
+        <div class="stat-item"><div class="num">12</div><div class="lbl">数据表</div></div>
+        <div class="stat-item"><div class="num">57</div><div class="lbl">Java 源文件</div></div>
+        <div class="stat-item"><div class="num">10</div><div class="lbl">前端页面</div></div>
+        <div class="stat-item"><div class="num">4</div><div class="lbl">AI计划模式</div></div>
+    </div>
+</section>
+
+<!-- ========== TECH STACK ========== -->
+<section class="section" style="padding-top:0">
+    <h2>硬核技术底座</h2>
+    <p class="sec-sub">工业级技术选型，保障系统稳健运行</p>
+    <div class="tech-grid">
+        <span class="tech-tag">Spring Boot 3.5</span>
+        <span class="tech-tag">Java 25</span>
+        <span class="tech-tag">MySQL 8.0</span>
+        <span class="tech-tag">Spring Data JPA</span>
+        <span class="tech-tag">Thymeleaf</span>
+        <span class="tech-tag">BCrypt 加密</span>
+        <span class="tech-tag">火山引擎豆包大模型</span>
+        <span class="tech-tag">Ark SDK</span>
+        <span class="tech-tag">原生 JS/CSS</span>
+        <span class="tech-tag">Maven 构建</span>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <p style="font-size:18px;margin-bottom:8px;font-weight:700;
+        background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;">✦ CogniFlow</p>
+    <p>AI驱动的个性化学习路径导航系统 · 课设作品</p>
+    <p style="margin-top:8px">
+        <a href="https://github.com" target="_blank" style="color:var(--text-dim);text-decoration:none" id="footerGithub">🐙 查看 GitHub 仓库 →</a>
+    </p>
+    <p style="margin-top:4px">© 2026 CogniFlow 项目组</p>
+</footer>
+
+<script>
+let isDark = true;
+function applyTheme(){
+    document.body.classList.toggle('light',!isDark);
+    document.getElementById('themeBtn').textContent = isDark?'🌙':'☀️';
+}
+function toggleTheme(){
+    isDark = !isDark; applyTheme();
+}
+applyTheme();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+CogniFlow 数据库 ER 图关系模式（可直接导入 ProcessOn）
+
+========== 实体（12张表）==========
+
+1. users (用户)
+   PK: id
+   ATTRIBUTES: username, password, email, role
+   说明: Admin和Student共用，role字段区分
+
+2. courses (课程)
+   PK: id
+   ATTRIBUTES: name, description, category, created_at
+
+3. knowledge_points (知识点)
+   PK: id
+   ATTRIBUTES: name, description, order_index, difficulty, created_at
+   FK: course_id → courses(id)
+   FK: parent_id → knowledge_points(id)
+
+4. questions (题库)
+   PK: id
+   ATTRIBUTES: type, title, option_a, option_b, option_c, option_d, answer, analysis, score, difficulty, created_at
+   FK: course_id → courses(id)
+   FK: knowledge_point_id → knowledge_points(id)
+
+5. study_records (学习记录)
+   PK: id
+   ATTRIBUTES: status, score, time_spent, created_at
+   FK: user_id → users(id)
+   FK: knowledge_point_id → knowledge_points(id)
+
+6. study_plans (学习计划)
+   PK: id
+   ATTRIBUTES: title, plan_type, content, total_days, progress_days, created_at
+   FK: user_id → users(id)
+
+7. chat_messages (聊天消息)
+   PK: id
+   ATTRIBUTES: role, content, created_at
+   FK: user_id → users(id)
+
+8. exam_records (考试记录)
+   PK: id
+   ATTRIBUTES: total_score, user_score, correct_count, question_count, question_ids, status, start_time, end_time, created_at
+   FK: user_id → users(id)
+   FK: course_id → courses(id)
+
+9. exam_answers (考试答题记录)
+   PK: id
+   ATTRIBUTES: user_answer, is_correct, score, created_at
+   FK: exam_record_id → exam_records(id)
+   FK: question_id → questions(id)
+
+10. announcements (公告)
+    PK: id
+    ATTRIBUTES: title, content, pinned, created_at
+    FK: publisher_id → users(id)
+
+11. course_requests (课程申请)
+    PK: id
+    ATTRIBUTES: topic, description, status, created_at
+    FK: user_id → users(id)
+
+12. system_logs (系统日志)
+    PK: id
+    ATTRIBUTES: action, detail, created_at
+    FK: user_id → users(id)
+
+========== 关系（15条外键）==========
+
+users  1 ──< N  study_records       (user_id → id) ON DELETE CASCADE
+users  1 ──< N  study_plans         (user_id → id) ON DELETE CASCADE
+users  1 ──< N  exam_records        (user_id → id) ON DELETE CASCADE
+users  1 ──< N  chat_messages       (user_id → id) ON DELETE CASCADE
+users  1 ──< N  announcements       (publisher_id → id) ON DELETE SET NULL
+users  1 ──< N  course_requests     (user_id → id) ON DELETE CASCADE
+users  1 ──< N  system_logs         (user_id → id) ON DELETE SET NULL
+
+courses  1 ──< N  knowledge_points  (course_id → id) ON DELETE CASCADE
+courses  1 ──< N  questions          (course_id → id) ON DELETE CASCADE
+courses  1 ──< N  exam_records       (course_id → id) ON DELETE CASCADE
+
+knowledge_points  1 ──< N  knowledge_points  (parent_id → id) ON DELETE SET NULL
+knowledge_points  1 ──< N  questions          (knowledge_point_id → id) ON DELETE SET NULL
+knowledge_points  1 ──< N  study_records      (knowledge_point_id → id) ON DELETE CASCADE
+
+exam_records  1 ──< N  exam_answers  (exam_record_id → id) ON DELETE CASCADE
+questions     1 ──< N  exam_answers  (question_id → id) ON DELETE CASCADE

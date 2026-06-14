@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学业考试 - CogniFlow</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0f0c29;--text:#e8e8e8;--text-dim:rgba(255,255,255,0.5);--card-bg:rgba(255,255,255,0.04);--card-border:rgba(255,255,255,0.08);--accent:#a78bfa;--topbar-bg:rgba(0,0,0,0.2);--topbar-text:rgba(255,255,255,0.8);--btn-text:#e0e0e0;--dropdown-bg:#1a1a2e;--input-bg:rgba(255,255,255,0.06);--danger:#ef4444;--success:#22c55e;--warning:#f59e0b}
+        .light{--bg:#f0f4ff;--text:#0a0a14;--text-dim:rgba(0,0,0,0.6);--card-bg:rgba(255,255,255,0.8);--card-border:rgba(124,58,237,0.15);--accent:#6d28d9;--topbar-bg:rgba(255,255,255,0.85);--topbar-text:rgba(0,0,0,0.75);--btn-text:#1a1a2e;--dropdown-bg:#f0f0f0;--input-bg:rgba(0,0,0,0.04);--danger:#dc2626;--success:#16a34a;--warning:#d97706}
+        body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(160deg,var(--bg) 0%,var(--bg) 30%,var(--bg) 60%,var(--bg) 100%);min-height:100vh;color:var(--text);transition:background .6s,color .3s;animation:pageIn .5s ease}
+        @keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes gradientFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        .topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:var(--topbar-bg);border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+        .topbar .brand{font-size:20px;font-weight:700;background:linear-gradient(135deg,#a78bfa,#60a5fa,#8b5cf6,#a78bfa);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradientFlow 4s ease infinite}
+        .topbar .right{display:flex;align-items:center;gap:12px}
+        .user-menu{position:relative;display:flex;align-items:center}
+        .user-menu .uname{font-size:13px;color:var(--topbar-text);cursor:pointer;padding:4px 10px;border-radius:8px}
+        .user-menu:hover .uname{background:rgba(255,255,255,0.1)}
+        .user-menu .dropdown{display:none;position:absolute;top:100%;right:0;background:var(--dropdown-bg);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:4px;min-width:100px;z-index:10}
+        .user-menu:hover .dropdown{display:block;animation:fadeDown .2s ease}
+        .user-menu .dropdown button{display:block;width:100%;text-align:left;padding:8px 14px;background:none;border:none;color:var(--text-dim);font-size:13px;cursor:pointer;border-radius:6px}
+        .user-menu .dropdown button:hover{background:rgba(255,255,255,0.08)}
+        .theme-btn{border-radius:50%;width:34px;height:34px;padding:0;font-size:16px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);cursor:pointer;color:var(--btn-text)}
+        .nav-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:var(--btn-text);padding:7px 16px;border-radius:20px;font-size:13px;cursor:pointer;transition:all .3s}
+        .nav-btn:hover{background:rgba(255,255,255,0.15);color:var(--text);transform:translateY(-1px)}
+        .nav-btn.active{background:rgba(167,139,250,0.2);border-color:rgba(167,139,250,0.4);color:#c4b5fd}
+
+        .main{max-width:720px;margin:0 auto;padding:24px 20px 60px;animation:fadeUp .5s .1s both}
+        .main h2{font-size:20px;color:var(--accent);margin-bottom:20px}
+
+        .start-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;padding:24px;margin-bottom:20px}
+        .start-card .row{display:flex;gap:12px;align-items:center}
+        .start-card select{flex:1;padding:12px 16px;background:var(--input-bg);border:1px solid var(--card-border);border-radius:12px;color:var(--text);font-size:15px;outline:none;cursor:pointer;font-family:inherit}
+        .start-card select:focus{border-color:var(--accent)}
+        .btn-main{padding:11px 28px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:.3s;white-space:nowrap}
+        .btn-start{background:linear-gradient(135deg,#a78bfa,#6366f1);border:none;color:#fff}
+        .btn-start:hover{box-shadow:0 8px 20px rgba(99,102,241,0.3);transform:translateY(-1px)}
+        .btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none}
+        .btn-outline{background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);color:var(--accent)}
+
+        .quiz-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;padding:24px;margin-bottom:20px}
+        .quiz-card .q-num{font-size:12px;color:var(--text-dim);margin-bottom:8px}
+        .quiz-card .q-title{font-size:16px;font-weight:600;margin-bottom:14px;line-height:1.6}
+        .quiz-card .q-score{font-size:11px;color:var(--accent);margin-left:8px}
+        .quiz-card .options{display:flex;flex-direction:column;gap:8px}
+        .quiz-card .opt{
+            padding:12px 16px;border:1px solid var(--card-border);border-radius:10px;cursor:pointer;transition:.3s;
+            font-size:14px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.02);
+        }
+        .quiz-card .opt:hover{border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.05)}
+        .quiz-card .opt.selected{border-color:var(--accent);background:rgba(167,139,250,0.12);color:var(--text)}
+        .quiz-card .opt.correct{border-color:var(--success);background:rgba(34,197,94,0.1)}
+        .quiz-card .opt.wrong{border-color:var(--danger);background:rgba(239,68,68,0.08)}
+        .quiz-card .opt .opt-label{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid var(--card-border);font-size:12px;font-weight:600;flex-shrink:0}
+        .quiz-card .opt.selected .opt-label{background:var(--accent);border-color:var(--accent);color:#fff}
+        .quiz-card .opt.correct .opt-label{background:var(--success);border-color:var(--success);color:#fff}
+        .quiz-card .opt.wrong .opt-label{background:var(--danger);border-color:var(--danger);color:#fff}
+        .quiz-card .tf-btns{display:flex;gap:10px}
+        .quiz-card .tf-btns button{flex:1;padding:12px;border-radius:10px;font-size:15px;cursor:pointer;border:1px solid var(--card-border);background:rgba(255,255,255,0.03);color:var(--text-dim);transition:.3s;font-weight:600}
+        .quiz-card .tf-btns button:hover{border-color:var(--accent);color:var(--text)}
+        .quiz-card .tf-btns button.sel{background:rgba(167,139,250,0.15);border-color:var(--accent);color:var(--accent)}
+        .quiz-card .short-input{width:100%;padding:12px 16px;background:var(--input-bg);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-size:14px;outline:none;font-family:inherit}
+        .quiz-card .q-analysis{font-size:12px;color:var(--text-dim);padding:10px 14px;margin-top:12px;background:rgba(167,139,250,0.06);border-radius:8px;line-height:1.6}
+
+        .result-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;padding:28px;margin-bottom:20px;text-align:center}
+        .result-card .big-score{font-size:56px;font-weight:800;margin-bottom:6px}
+        .result-card .big-score.good{color:var(--success)}.result-card .big-score.warn{color:var(--warning)}.result-card .big-score.bad{color:var(--danger)}
+        .result-card .sub{font-size:13px;color:var(--text-dim);margin-bottom:20px}
+        .result-card .btns{display:flex;gap:10px;justify-content:center}
+
+        .history-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;padding:24px;margin-bottom:20px}
+        .history-card h3{font-size:16px;color:var(--accent);margin-bottom:14px}
+        .h-table{width:100%;border-collapse:collapse}
+        .h-table th,.h-table td{padding:10px 14px;text-align:left;font-size:13px;border-bottom:1px solid var(--card-border)}
+        .h-table th{color:var(--text-dim);font-weight:500}
+        .h-table td{color:var(--text)}
+
+        .empty{text-align:center;padding:60px 20px;color:var(--text-dim)}
+        .empty .big{font-size:36px;margin-bottom:10px}
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="brand" style="cursor:pointer" onclick="location.href='/welcome'">✦ CogniFlow</div>
+    <div class="right">
+        <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+        <button class="nav-btn" onclick="location.href='/'">🏠 主页</button>
+        <button class="nav-btn" onclick="location.href='/courses'">📚 课程</button>
+        <button class="nav-btn active">📝 考试</button>
+        <button class="nav-btn" onclick="location.href='/plans'">📋 我的计划</button>
+        <div class="user-menu">
+            <span class="uname" id="userName">未登录</span>
+            <div class="dropdown"><button onclick="location.href='/profile'">👤 个人信息</button><button onclick="logout()">退出登录</button></div>
+        </div>
+    </div>
+</div>
+
+<div class="main">
+    <h2 id="pageTitle">📝 学业考试</h2>
+
+    <div id="viewSelect">
+        <div class="start-card">
+            <div class="row">
+                <select id="courseSelect"><option value="">-- 选择考试课程 --</option></select>
+                <button class="btn-main btn-start" onclick="startExam()">开始考试</button>
+            </div>
+        </div>
+        <div id="historyArea"></div>
+    </div>
+
+    <div id="viewQuiz" style="display:none">
+        <div id="resumeNote" style="display:none;text-align:center;padding:10px;margin-bottom:12px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:10px;color:#f59e0b;font-size:13px">
+            ⚠️ 你有一个进行中的考试，已自动恢复
+        </div>
+        <div id="quizArea"></div>
+        <div style="text-align:center;margin:20px 0;display:flex;gap:12px;justify-content:center">
+            <button class="btn-main btn-start" onclick="submitExam()">📝 提交答卷</button>
+            <button class="btn-main" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171" onclick="abandonExam()">🚫 放弃考试</button>
+        </div>
+    </div>
+
+    <div id="viewResult" style="display:none">
+        <div id="resultArea"></div>
+    </div>
+</div>
+
+<script>
+const user = JSON.parse(localStorage.getItem('cf_user')||'{}');
+if(!user.userId) window.location.replace('/login');
+document.getElementById('userName').textContent = user.username;
+
+let isDark = localStorage.getItem('cf_theme') !== 'light';
+function applyTheme(){document.body.classList.toggle('light',!isDark);document.querySelector('.theme-btn').textContent=isDark?'🌙':'☀️'}
+function toggleTheme(){isDark=!isDark;localStorage.setItem('cf_theme',isDark?'dark':'light');applyTheme()}
+applyTheme();
+
+let currentExam = null;
+let userAnswers = {};
+let allCourses = [];
+
+async function init(){
+    try{allCourses=await fetch('/api/courses').then(r=>r.json())}catch(e){}
+    document.getElementById('courseSelect').innerHTML='<option value="">-- 选择考试课程 --</option>'+
+        allCourses.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    loadHistory();
+}
+init();
+
+async function startExam(){
+    const cid=document.getElementById('courseSelect').value;
+    if(!cid){alert('请先选择课程');return}
+    try{
+        const data=await fetch('/api/exam/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:user.userId,courseId:parseInt(cid)})}).then(r=>r.json());
+        currentExam=data;
+        userAnswers={};
+        renderQuiz(data.questions);
+        switchTo('quiz');
+        document.getElementById('pageTitle').textContent='📝 '+allCourses.find(c=>c.id==parseInt(cid))?.name+' 考试';
+        document.getElementById('resumeNote').style.display=data.resumed?'block':'none';
+    }catch(e){alert('开始考试失败')}
+}
+
+function renderQuiz(questions){
+    let html='';
+    questions.forEach((q,i)=>{
+        html+=`<div class="quiz-card">
+            <div class="q-num">第 ${i+1} 题 · ${q.difficulty==='EASY'?'简单':q.difficulty==='MEDIUM'?'中等':'困难'}<span class="q-score">(${q.score||5}分)</span></div>
+            <div class="q-title">${q.title}</div>`;
+        if(q.type==='SINGLE'){
+            html+=`<div class="options">${['A','B','C','D'].map(l=>`
+                <div class="opt" onclick="selectOption(${q.id},'${l}',this)" id="opt-${q.id}-${l}">
+                    <div class="opt-label">${l}</div><span>${q['option'+l]||''}</span>
+                </div>`).join('')}</div>`;
+        }else if(q.type==='MULTI'){
+            html+=`<div class="options">${['A','B','C','D'].map(l=>`
+                <div class="opt" onclick="toggleMulti(${q.id},'${l}',this)" id="optm-${q.id}-${l}">
+                    <div class="opt-label">${l}</div><span>${q['option'+l]||''}</span>
+                </div>`).join('')}</div>`;
+        }else if(q.type==='TF'){
+            html+=`<div class="tf-btns">
+                <button onclick="selectTF(${q.id},'T',this)" id="tf-${q.id}-T">✓ 正确</button>
+                <button onclick="selectTF(${q.id},'F',this)" id="tf-${q.id}-F">✗ 错误</button>
+            </div>`;
+        }else{
+            html+=`<input class="short-input" placeholder="请输入答案" oninput="userAnswers[${q.id}]=this.value">`;
+        }
+        html+='</div>';
+    });
+    document.getElementById('quizArea').innerHTML=html;
+}
+
+function selectOption(qid,val,el){
+    document.querySelectorAll(`[id^="opt-${qid}-"]`).forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');
+    userAnswers[qid]=val;
+}
+
+function toggleMulti(qid,val,el){
+    el.classList.toggle('selected');
+    let sel=document.querySelectorAll(`#optm-${qid}-A.selected,#optm-${qid}-B.selected,#optm-${qid}-C.selected,#optm-${qid}-D.selected`);
+    let vals=[];
+    if(sel.length==0){delete userAnswers[qid];return}
+    sel.forEach(o=>vals.push(o.querySelector('.opt-label').textContent));
+    vals.sort();
+    userAnswers[qid]=vals.join(',');
+}
+
+function selectTF(qid,val,el){
+    document.querySelectorAll(`[id^="tf-${qid}-"]`).forEach(b=>b.classList.remove('sel'));
+    el.classList.add('sel');
+    userAnswers[qid]=val;
+}
+
+async function submitExam(){
+    if(!currentExam) return;
+    const answers=Object.entries(userAnswers).map(([qid,ans])=>({questionId:qid,answer:ans}));
+    if(answers.length===0){alert('请至少回答一题');return}
+    if(!confirm('确定提交答卷？'))return;
+    try{
+        const result=await fetch('/api/exam/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({examRecordId:currentExam.examRecordId,answers:answers})}).then(r=>r.json());
+        renderResult(result);
+        switchTo('result');
+        document.getElementById('pageTitle').textContent='📝 考试结果';
+    }catch(e){alert('提交失败')}
+}
+
+async function abandonExam(){
+    if(!currentExam) return;
+    if(!confirm('确定放弃本次考试吗？')) return;
+    try{
+        await fetch('/api/exam/abandon/'+currentExam.examRecordId,{method:'POST'});
+        currentExam=null;
+        userAnswers={};
+        switchTo('select');
+        loadHistory();
+    }catch(e){alert('操作失败')}
+}
+
+function renderResult(result){
+    const pct=result.percent||0;
+    const cls=pct>=80?'good':pct>=60?'warn':'bad';
+    let detailHtml=result.details.map((d,i)=>`<div class="quiz-card" style="text-align:left">
+        <div class="q-num">第 ${i+1} 题 · ${d.correct?'<span style="color:var(--success)">✓ 正确</span>':'<span style="color:var(--danger)">✗ 错误</span>'}<span class="q-score">(${d.score||0}分)</span></div>
+        <div class="q-title">${d.title}</div>
+        ${d.optionA?`<div class="options" style="margin-top:10px">${['A','B','C','D'].map(l=>d['option'+l]?`<div class="opt ${d.userAnswer&&d.userAnswer.indexOf(l)>=0?(d.correct?'correct':'wrong'):(d.correctAnswer&&d.correctAnswer.indexOf(l)>=0?'correct':'')}">
+            <div class="opt-label">${l}</div><span>${d['option'+l]}</span></div>`:'').join('')}</div>`:''}
+        <div class="q-analysis">📖 正确答案：${d.correctAnswer} · ${d.analysis||'暂无解析'}</div>
+    </div>`).join('');
+
+    document.getElementById('resultArea').innerHTML=`
+        <div class="result-card">
+            <div class="big-score ${cls}">${pct}分</div>
+            <div class="sub">正确 ${result.correctCount}/${result.questionCount} 题 · 得分 ${result.userScore}/${result.totalScore}</div>
+            <div class="btns">
+                <button class="btn-main btn-start" onclick="location.reload()">🔄 重新考试</button>
+                <button class="btn-main btn-outline" onclick="location.href='/courses'">📚 去学习</button>
+            </div>
+        </div>
+        ${detailHtml}`;
+}
+
+async function loadHistory(){
+    try{
+        const records=await fetch('/api/exam/history/'+user.userId).then(r=>r.json());
+        if(!records||!records.length){
+            document.getElementById('historyArea').innerHTML='<div class="empty" style="padding:30px"><p style="font-size:13px">尚无考试记录</p></div>';
+            return;
+        }
+        document.getElementById('historyArea').innerHTML=`<div class="history-card">
+            <h3>📋 历史考试记录</h3>
+            <table class="h-table"><thead><tr><th>课程</th><th>得分</th><th>正确率</th><th>状态</th><th>时间</th></tr></thead><tbody>${
+            records.map(r=>{
+                const c=allCourses.find(x=>x.id===r.courseId);
+                const pct=r.totalScore>0?Math.round(r.userScore*100/r.totalScore):0;
+                const color=pct>=80?'var(--success)':pct>=60?'var(--warning)':'var(--danger)';
+                return `<tr><td>${c?.name||'课程'+r.courseId}</td>
+                    <td style="color:${color};font-weight:600">${r.userScore||0}/${r.totalScore||0}</td>
+                    <td style="color:${color}">${pct}%</td>
+                    <td>${r.status==='COMPLETED'?'已完成':r.status==='ABANDONED'?'已放弃':'进行中'}</td>
+                    <td>${(r.startTime||'').substring(0,16).replace('T',' ')}</td></tr>`;
+            }).join('')}</tbody></table></div>`;
+    }catch(e){}
+}
+
+function switchTo(view){
+    document.getElementById('viewSelect').style.display=view==='select'?'block':'none';
+    document.getElementById('viewQuiz').style.display=view==='quiz'?'block':'none';
+    document.getElementById('viewResult').style.display=view==='result'?'block':'none';
+    if(view==='result'){window.scrollTo(0,0)}
+}
+
+function logout(){localStorage.removeItem('cf_user');window.location.href='/login'}
+</script>
+</body>
+</html>
