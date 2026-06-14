@@ -1,0 +1,10 @@
+target/
+node_modules/
+*.log
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+*.pptx
+*.xlsx
+*.pdf
