@@ -33,7 +33,7 @@
         .topbar .brand{
             font-size:20px;font-weight:700;
             background:linear-gradient(135deg,#a78bfa,#60a5fa,#8b5cf6,#a78bfa);
-            background-size:300% 300%;-webkit-background-clip:text;
+            background-size:200% 200%;-webkit-background-clip:text;
             -webkit-text-fill-color:transparent;
             animation:gradientFlow 4s ease infinite;
         }
@@ -64,6 +64,15 @@
                        radial-gradient(ellipse at 80% 20%,rgba(60,140,240,0.18),transparent 40%),
                        radial-gradient(ellipse at 50% 80%,rgba(140,80,240,0.15),transparent 45%);
         }
+        .light .hero::before{background:radial-gradient(ellipse at 20% 50%,rgba(120,80,240,0.12),transparent 50%),
+            radial-gradient(ellipse at 80% 20%,rgba(60,140,240,0.08),transparent 40%),
+            radial-gradient(ellipse at 50% 80%,rgba(140,80,240,0.06),transparent 45%)}
+        .light .hero::after{opacity:.25}
+        .light .theme-btn{background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.12)}
+        .light .btn-sm{background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.12)}
+        .light .btn-sm:hover{background:rgba(109,40,217,0.1);border-color:rgba(109,40,217,0.3)}
+        .light .hero-content .badge{color:#5b21b6;background:rgba(109,40,217,0.08);border-color:rgba(109,40,217,0.18)}
+        .light .hero-hint code{color:#4c1d95;background:rgba(109,40,217,0.08)}
         .hero::after{
             content:'';position:absolute;inset:0;
             background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 L55 30 L30 55 L5 30Z' fill='none' stroke='rgba(167,139,250,0.06)' stroke-width='1'/%3E%3Ccircle cx='30' cy='30' r='3' fill='rgba(167,139,250,0.1)'/%3E%3C/svg%3E");
@@ -75,11 +84,11 @@
             background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);
             border-radius:20px;font-size:13px;color:#c4b5fd;letter-spacing:1px;
         }
-        @keyframes gradientFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        @keyframes gradientFlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
         .hero-content h1{
             font-size:clamp(32px,5vw,54px);font-weight:800;line-height:1.2;margin-bottom:16px;
             background:linear-gradient(135deg,#a78bfa,#60a5fa,#8b5cf6,#a78bfa);
-            background-size:300% 300%;-webkit-background-clip:text;
+            background-size:200% 200%;-webkit-background-clip:text;
             -webkit-text-fill-color:transparent;animation:gradientFlow 4s ease infinite;
         }
         .hero-content .subtitle{
